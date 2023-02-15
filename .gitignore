@@ -1,0 +1,9 @@
+node_modules/
+dist
+docs
+.env
+
+.DS_Store
+
+.cov
+.npm

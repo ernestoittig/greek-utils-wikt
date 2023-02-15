@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "strict": true
+  },
+  "fmt": {
+    "options": {
+      "singleQuote": true
+    },
+    "files": {
+      "exclude": ["./.npm", "./.cov", "deno.lock"]
+    }
+  },
+  "lint": {
+    "files": {
+      "exclude": ["./.npm", "./.cov"]
+    },
+    "rules": {
+      "include": [
+        "eqeqeq"
+      ]
+    }
+  },
+  "test": {
+    "files": {
+      "include": [
+        "tests/"
+      ]
+    }
+  }
+}
