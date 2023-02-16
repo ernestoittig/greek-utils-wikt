@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 env:
-  DENO_DIR: ~/.deno
+  DENO_DIR: ./.deno
 
 jobs:
   publish:
@@ -24,7 +24,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ env.DENO_DIR }}
-          key: ${{ hashFiles('lock.json') }}
+          key: ${{ hashFiles('deno.lock') }}
 
       - name: Setup Deno
         uses: denoland/setup-deno@v1
