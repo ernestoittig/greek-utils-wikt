@@ -48,6 +48,6 @@ jobs:
       # Maybe one day i'll actually upload this
       - name: Collect coverage
         run: |
-          deno coverage cov/
-          deno coverage --lcov --outpout=cov.lcov cov/
+          deno coverage .cov/
+          deno coverage --lcov --output=cov.lcov .cov/
         
