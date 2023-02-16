@@ -52,4 +52,4 @@ const wikt = require('greek-utils-wikt');
 ## Docs
 
 You can find the docs for this package in the
-[deno module page](https://deno.land/x/grek-utils-wikt).
+[deno module page](https://deno.land/x/greek_utils_wikt).
