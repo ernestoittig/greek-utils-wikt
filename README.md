@@ -21,15 +21,15 @@ import {
   tokenize,
   tr,
   /* ... */
-} from 'https://deno.land/x/grek-utils-wikt/mod.ts';
+} from 'https://deno.land/x/greek_utils_wikt/mod.ts';
 ```
 
 or directly from files:
 
 ```ts
-import tr from 'https://deno.land/x/grek-utils-wikt/src/transliterate.ts';
-import { tokenize } from 'https://deno.land/x/grek-utils-wikt/src/utilities.ts';
-import data from 'https://deno.land/x/grek-utils-wikt/src/data.ts';
+import tr from 'https://deno.land/x/greek_utils_wikt/src/transliterate.ts';
+import { tokenize } from 'https://deno.land/x/greek_utils_wikt/src/utilities.ts';
+import data from 'https://deno.land/x/greek_utils_wikt/src/data.ts';
 /* ... */
 ```
 
