@@ -11,11 +11,19 @@
 */
 
 import {
+  combining_diacritic,
+  conversions,
+  diacritic,
+  diacritic_order,
   diacritics,
+  groups,
 } from './data.ts';
+
 const {
   macron,
   breve,
+  spacing_macron,
+  spacing_breve,
   rough,
   smooth,
   diaeresis,
@@ -65,6 +73,56 @@ add_info('Ιι', iota_t);
 add_info('Υυ', upsilon_t);
 // add_info("ΒΓΔΖΘΚΛΜΝΞΠΡΣΤΦΧΨϜϘϺϷͶϠβγδζθκλμνξπρσςτφχψϝϙϻϸͷϡ", consonant_t)
 add_info('Ρρ', rho_t);
+
+const sparseConcat = (arr: unknown[]) =>
+  arr.filter((v) => typeof v !== 'undefined').join('');
+
+/**
+ * Converts spacing to combining diacritics, and nonstandard to polytonic Greek
+ * @param text the text to convert
+ * @returns the text with diacritics converted
+ */
+export function standardDiacritics(text: string) {
+  text = decompose(text);
+  return text.replace(/./g, (x) => conversions[x] ?? x);
+}
+
+const reorderDiacriticSequence = (diacritics: string) => {
+  const output = <string[]> [];
+  for (const diacritic of diacritics) {
+    let index = diacritic_order[diacritic];
+    if (typeof output[index] === 'undefined') {
+      output[index] = diacritic;
+    } else {
+      // Place breve after macron
+      if (diacritic === breve) {
+        index = index + 1;
+      }
+      // The following might have odd results when there
+      // are three or more diacritics.
+      output.splice(index, 0, diacritic);
+    }
+  }
+  return sparseConcat(output);
+};
+
+/**
+ * This function arranges diacritics in the following order:
+ *
+ * 1. macron or breve
+ * 2. breathings or diaeresis
+ * 3. acute, circumflex, or grave
+ * 4. iota subscript
+ *
+ * @param diacritics text with diacritics
+ * @returns the text with the diacritics in the correct order
+ */
+export function reorderDiacritics(text: string) {
+  return decompose(text).replace(
+    new RegExp(combining_diacritic + combining_diacritic + '+', 'g'),
+    reorderDiacriticSequence,
+  );
+}
 
 const make_tokens = (text: string) => {
   const tokens = <string[]> [];
@@ -156,4 +214,38 @@ export function tokenize(text: string) {
     cache[decomposed] = make_tokens(text);
   }
   return cache[decomposed];
+}
+
+/**
+ * Places diacritics in the following order:
+ *
+ * 1. breathings or diaeresis
+ * 2. acute, circumflex, or grave
+ * 3. macron or breve
+ * 4. iota subscript
+
+ * @param text text with diacritics
+ * @returns the text with the diacritics in the pronunciation order
+ */
+export function pronunciationOrder(text: string) {
+  text = standardDiacritics(text);
+
+  if (new RegExp(groups.accents).test(text)) {
+    text = text.replaceAll(
+      new RegExp(diacritic + diacritic + '+', 'g'),
+      (sequence) => {
+        // Put breathing and diaeresis first, then accents, then macron or breve
+        return [
+          sequence.match(new RegExp(groups[2]))?.[0] ?? '',
+          sequence.match(new RegExp(groups[3]))?.[0] ?? '',
+          sequence.match(new RegExp(groups[1]))?.[0] ?? '',
+          sequence.match(new RegExp(groups[4]))?.[0] ?? '',
+        ].join('');
+      },
+    );
+    text = text.replaceAll(macron, spacing_macron); // combining to spacing macron
+    text = text.replaceAll(breve, spacing_breve); // combining to spacing breve
+  }
+
+  return text.normalize();
 }
