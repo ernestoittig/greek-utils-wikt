@@ -7,12 +7,12 @@
       "singleQuote": true
     },
     "files": {
-      "exclude": ["./.npm", "./.cov", "deno.lock"]
+      "exclude": ["./.npm", "./.cov", "./.deno", "deno.lock"]
     }
   },
   "lint": {
     "files": {
-      "exclude": ["./.npm", "./.cov"]
+      "exclude": ["./.npm", "./.cov", "./.deno"]
     },
     "rules": {
       "include": [
