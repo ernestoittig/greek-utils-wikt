@@ -1,0 +1,56 @@
+# This workflow will run tests using node and then publish a package to NPM when a release is created
+# For more information see: https://docs.github.com/en/actions/publishing-packages/publishing-nodejs-packages
+name: Publish to NPM
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+env:
+  DENO_DIR: ./.deno
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup repo
+        uses: actions/checkout@v3
+          
+      - name: Cache Deno dependencies 
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.DENO_DIR }}
+          key: ${{ hashFiles('deno.lock') }}
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        # uses: denoland/setup-deno@9db7f66e8e16b5699a514448ce994936c63f0d54
+        with:
+          deno-version: v1.x
+
+      - name: Generate Node package
+        run: deno run -A build_npm.ts ${{ github.ref_name  }}
+        
+      - name: Set up NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: 'https://registry.npmjs.org'
+      
+      - name: Install node packages
+        run: npm ci
+        working-directory: ./.npm
+      
+      - name: Test with npm
+        run: npm run test
+        working-directory: ./.npm
+      
+      - name: Publish
+        run: npm publish
+        working-directory: ./.npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
