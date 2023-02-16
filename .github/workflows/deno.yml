@@ -13,7 +13,7 @@ permissions:
   contents: read
 
 env:
-  DENO_DIR: ${{ env.RUNNER_TEMP }}/deno
+  DENO_DIR: ./.deno
 
 jobs:
   test:
